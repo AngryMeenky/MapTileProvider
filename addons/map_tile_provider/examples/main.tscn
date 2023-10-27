@@ -1,0 +1,100 @@
+[gd_scene load_steps=5 format=3 uid="uid://bm3uq3dr1c5ty"]
+
+[ext_resource type="Script" path="res://addons/map_tile_provider/MapTileLoader.gd" id="1_io31x"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/examples/ZoomLabel.gd" id="2_wbcdl"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/examples/TextureRect.gd" id="3_t10d1"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_owr5c"]
+
+[node name="main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MapTileLoader" type="Node" parent="."]
+script = ExtResource("1_io31x")
+cache_tiles = true
+
+[node name="UI" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer"]
+layout_mode = 2
+
+[node name="LatLabel" type="Label" parent="UI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Latitude:"
+
+[node name="Latitude" type="LineEdit" parent="UI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+text = "29.9792"
+placeholder_text = "latitude"
+
+[node name="LonLabel" type="Label" parent="UI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Longitude:"
+
+[node name="Longitude" type="LineEdit" parent="UI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+text = "31.1342"
+placeholder_text = "longitude"
+
+[node name="ZoomLabel" type="Label" parent="UI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+text = "Zoom:  1"
+script = ExtResource("2_wbcdl")
+
+[node name="Zoom" type="HSlider" parent="UI/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+min_value = 1.0
+max_value = 20.0
+value = 1.0
+tick_count = 5
+
+[node name="Update" type="Button" parent="UI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Update"
+
+[node name="Continuous" type="CheckButton" parent="UI/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Continuous"
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="TileDisplay" type="TextureRect" parent="UI/VBoxContainer/PanelContainer/CenterContainer"]
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 2
+texture = SubResource("ImageTexture_owr5c")
+script = ExtResource("3_t10d1")
+
+[connection signal="tile_loaded" from="MapTileLoader" to="UI/VBoxContainer/PanelContainer/CenterContainer/TileDisplay" method="_on_tile_loaded"]
+[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer/Zoom" to="UI/VBoxContainer/HBoxContainer/ZoomLabel" method="_on_zoom_value_changed"]
+[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer/Zoom" to="UI/VBoxContainer/PanelContainer/CenterContainer/TileDisplay" method="_on_zoom_value_changed"]
+[connection signal="pressed" from="UI/VBoxContainer/HBoxContainer/Update" to="UI/VBoxContainer/PanelContainer/CenterContainer/TileDisplay" method="_on_button_pressed"]
+[connection signal="toggled" from="UI/VBoxContainer/HBoxContainer/Continuous" to="UI/VBoxContainer/PanelContainer/CenterContainer/TileDisplay" method="_on_button_toggled"]
