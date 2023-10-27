@@ -2,8 +2,8 @@
 class_name BingMapProvider
 extends MapProvider
 
-@export var referrer: String = "https://www.bing.com/maps/"
-@export var api_version: String = "563"
+@export var referrer := "https://www.bing.com/maps/"
+@export var api_version := "563"
 
 
 func _construct_url(args: Dictionary) -> String:

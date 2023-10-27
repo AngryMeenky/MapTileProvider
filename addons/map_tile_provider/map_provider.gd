@@ -10,8 +10,8 @@ enum MapType {
 }
 
 
-@export var language_code: String = "en"
-@export var map_style: MapType = MapType.SATELLITE
+@export var language_code := "en"
+@export var map_style := MapType.SATELLITE
 
 
 func _create_tile_parameters(lat: float, lon: float, zoom: int) -> Dictionary:

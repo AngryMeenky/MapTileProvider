@@ -16,6 +16,7 @@ func _save(resource: Resource, path: String, flags: int) -> Error:
 	var dir = path.get_base_dir()
 	if not DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
+
 	var file = FileAccess.open(path, FileAccess.WRITE)
 	if file:
 		var tile: MapTile = resource

@@ -3,8 +3,8 @@ class_name MapQuestMapProvider
 extends MapProvider
 
 
-@export var referrer: String = "https://mapquest.com"
-@export var api_key: String = ""
+@export var referrer := "https://mapquest.com"
+@export var api_key := ""
 
 
 func _construct_url(args: Dictionary) -> String:

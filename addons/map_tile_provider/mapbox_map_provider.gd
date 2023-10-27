@@ -3,10 +3,10 @@ class_name MapboxMapProvider
 extends MapProvider
 
 
-@export var referrer: String = "https://www.mapbox.com/"
-@export var account: String = ""
-@export var token: String = ""
-@export var custom_style: String = ""
+@export var referrer := "https://www.mapbox.com/"
+@export var account := ""
+@export var token := ""
+@export var custom_style := ""
 
 
 func _construct_url(args: Dictionary) -> String:

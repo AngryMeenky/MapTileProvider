@@ -13,21 +13,21 @@ enum Provider {
 }
 
 
-static var MAGIC: Array = [
+static var MAGIC := [
 	PackedByteArray([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]),
 	PackedByteArray([0xff, 0xd8, 0xff, 0x00]),
 ]
 
-static var FORMATS: Array = [
+static var FORMATS := [
 	 MapTile.Format.PNG,
 	 MapTile.Format.JPG,
 ]
 
 
-@export var custom_fields: Dictionary = {}
-@export var user_agent: String = "Mozilla/5.0 Gecko/20100101 Firefox/118.0"
-@export var allow_network: bool = true
-@export var cache_tiles: bool = false
+@export var custom_fields := {}
+@export var user_agent := "Mozilla/5.0 Gecko/20100101 Firefox/118.0"
+@export var allow_network := true
+@export var cache_tiles := false
 @export var tile_provider: Provider:
 	set(type):
 		var new_provider: MapProvider
@@ -55,12 +55,12 @@ static var FORMATS: Array = [
 			_reserve.append(req)
 			add_child(req)
 
-var _map_provider: MapProvider = MapProvider.new()
-var _outstanding_requests: int = 0
-var _active: Array = []
-var _reserve: Array = []
-var _local: Array = []
-var _waiting: Array = []
+var _map_provider := MapProvider.new()
+var _outstanding_requests := 0
+var _active := []
+var _reserve := []
+var _local := []
+var _waiting := []
 
 
 func _ready():
