@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="MapTileProvider"
-run/main_scene="res://addons/map_tile_provider/examples/main.tscn"
+run/main_scene="res://addons/map_tile_provider/examples/single.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
 
