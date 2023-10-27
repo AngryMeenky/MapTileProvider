@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://bm3uq3dr1c5ty"]
 
-[ext_resource type="Script" path="res://addons/map_tile_provider/MapTileLoader.gd" id="1_28ewr"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/map_tile_loader.gd" id="1_28ewr"]
 [ext_resource type="Script" path="res://addons/map_tile_provider/examples/UI.gd" id="2_u30yg"]
 [ext_resource type="Script" path="res://addons/map_tile_provider/examples/ZoomLabel.gd" id="2_vcwck"]
 [ext_resource type="Script" path="res://addons/map_tile_provider/examples/TextureRect.gd" id="3_vwxrx"]
