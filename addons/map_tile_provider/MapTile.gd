@@ -38,3 +38,19 @@ func unpack(file: FileAccess) -> Error:
 	image = file.get_buffer(expected)
 	if len(image) != expected: return ERR_FILE_EOF
 	return OK
+
+
+func to_image(img: Image) -> Error:
+	match format:
+		Format.BMP:
+			return img.load_bmp_from_buffer(image)
+		Format.JPG:
+			return img.load_jpg_from_buffer(image)
+		Format.PNG:
+			return img.load_png_from_buffer(image)
+		Format.TGA:
+			return img.load_tga_from_buffer(image)
+		Format.WEBP:
+			return img.load_webp_from_buffer(image)
+		_:
+			return ERR_INVALID_DATA

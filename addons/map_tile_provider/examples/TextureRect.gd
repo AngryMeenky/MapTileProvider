@@ -13,18 +13,7 @@ func _ready():
 func _on_tile_loaded(status, tile):
 	if status == OK:
 		var img = Image.new()
-		match tile.format:
-			MapTile.Format.BMP:
-				status = img.load_bmp_from_buffer(tile.image)
-			MapTile.Format.JPG:
-				status = img.load_jpg_from_buffer(tile.image)
-			MapTile.Format.PNG:
-				status = img.load_png_from_buffer(tile.image)
-			MapTile.Format.TGA:
-				status = img.load_tga_from_buffer(tile.image)
-			MapTile.Format.WEBP:
-				status = img.load_webp_from_buffer(tile.image)
-		if status == OK:
+		if tile.to_image(img) == OK:
 			tex.set_image(img)
 
 
