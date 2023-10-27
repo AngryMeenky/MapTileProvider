@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://bm3uq3dr1c5ty"]
+[gd_scene load_steps=6 format=3 uid="uid://bm3uq3dr1c5ty"]
 
-[ext_resource type="Script" path="res://addons/map_tile_provider/MapTileLoader.gd" id="1_io31x"]
-[ext_resource type="Script" path="res://addons/map_tile_provider/examples/ZoomLabel.gd" id="2_wbcdl"]
-[ext_resource type="Script" path="res://addons/map_tile_provider/examples/TextureRect.gd" id="3_t10d1"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/MapTileLoader.gd" id="1_28ewr"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/examples/UI.gd" id="2_u30yg"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/examples/ZoomLabel.gd" id="2_vcwck"]
+[ext_resource type="Script" path="res://addons/map_tile_provider/examples/TextureRect.gd" id="3_vwxrx"]
 
 [sub_resource type="ImageTexture" id="ImageTexture_owr5c"]
 
@@ -15,7 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="MapTileLoader" type="Node" parent="."]
-script = ExtResource("1_io31x")
+script = ExtResource("1_28ewr")
 cache_tiles = true
 
 [node name="UI" type="MarginContainer" parent="."]
@@ -29,6 +30,7 @@ theme_override_constants/margin_left = 10
 theme_override_constants/margin_top = 10
 theme_override_constants/margin_right = 10
 theme_override_constants/margin_bottom = 10
+script = ExtResource("2_u30yg")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="UI"]
 layout_mode = 2
@@ -62,14 +64,14 @@ placeholder_text = "longitude"
 custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 text = "Zoom:  1"
-script = ExtResource("2_wbcdl")
+script = ExtResource("2_vcwck")
 
 [node name="Zoom" type="HSlider" parent="UI/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 min_value = 1.0
 max_value = 20.0
-value = 1.0
+value = 13.0
 tick_count = 5
 
 [node name="Update" type="Button" parent="UI/VBoxContainer/HBoxContainer"]
@@ -91,7 +93,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(512, 512)
 layout_mode = 2
 texture = SubResource("ImageTexture_owr5c")
-script = ExtResource("3_t10d1")
+script = ExtResource("3_vwxrx")
 
 [connection signal="tile_loaded" from="MapTileLoader" to="UI/VBoxContainer/PanelContainer/CenterContainer/TileDisplay" method="_on_tile_loaded"]
 [connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer/Zoom" to="UI/VBoxContainer/HBoxContainer/ZoomLabel" method="_on_zoom_value_changed"]
