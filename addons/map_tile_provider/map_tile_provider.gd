@@ -1,41 +1,47 @@
 @tool
 extends EditorPlugin
 
+
+const MapTileResourceLoader = preload("res://addons/map_tile_provider/map_tile_resource_loader.gd")
+const MapTileResourceSaver = preload("res://addons/map_tile_provider/map_tile_resource_saver.gd")
+
+
 var _loader: MapTileResourceLoader
 var _saver: MapTileResourceSaver
+
 
 func _enter_tree():
 	# initialize tile providers
 	add_custom_type(
-		"MapProvider", "Node",
-		 preload("res://addons/map_tile_provider/MapProvider.gd"),
-		 preload("res://addons/map_tile_provider/map.svg")
+			"MapProvider", "Node",
+			preload("res://addons/map_tile_provider/map_provider.gd"),
+			preload("res://addons/map_tile_provider/map.svg")
 	)
 	add_custom_type(
-		"BingMapProvider", "Node", 
-		 preload("res://addons/map_tile_provider/BingMapProvider.gd"),
-		 preload("res://addons/map_tile_provider/map.svg")
+			"BingMapProvider", "Node", 
+			preload("res://addons/map_tile_provider/bing_map_provider.gd"),
+			preload("res://addons/map_tile_provider/map.svg")
 	)
 	add_custom_type(
-		"MapboxMapProvider", "Node",
-		 preload("res://addons/map_tile_provider/MapboxMapProvider.gd"),
-		 preload("res://addons/map_tile_provider/map.svg")
+			"MapboxMapProvider", "Node",
+			preload("res://addons/map_tile_provider/mapbox_map_provider.gd"),
+			preload("res://addons/map_tile_provider/map.svg")
 	)
 	add_custom_type(
-		"MapQuestMapProvider", "Node",
-		 preload("res://addons/map_tile_provider/MapQuestMapProvider.gd"),
-		 preload("res://addons/map_tile_provider/map.svg")
+			"MapQuestMapProvider", "Node",
+			preload("res://addons/map_tile_provider/mapquest_map_provider.gd"),
+			preload("res://addons/map_tile_provider/map.svg")
 	)
 	# initialize the loader
 	add_custom_type(
-		"MapTile", "Resource",
-		 preload("res://addons/map_tile_provider/MapTile.gd"),
-		 preload("res://addons/map_tile_provider/tile.svg")
+			"MapTile", "Resource",
+			preload("res://addons/map_tile_provider/map_tile.gd"),
+			preload("res://addons/map_tile_provider/tile.svg")
 	)
 	add_custom_type(
-		"MapTileLoader", "Node",
-		 preload("res://addons/map_tile_provider/MapTileLoader.gd"),
-		 preload("res://addons/map_tile_provider/loader.svg")
+			"MapTileLoader", "Node",
+			preload("res://addons/map_tile_provider/map_tile_loader.gd"),
+			preload("res://addons/map_tile_provider/loader.svg")
 	)
 	_loader = MapTileResourceLoader.new()
 	ResourceLoader.add_resource_format_loader(_loader)

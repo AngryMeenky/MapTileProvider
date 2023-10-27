@@ -2,11 +2,16 @@
 class_name MapProvider
 extends Node
 
-enum MapType { SATELLITE, STREET, HYBRID }
+
+enum MapType {
+	 SATELLITE,
+	 STREET,
+	 HYBRID,
+}
 
 
 @export var language_code: String = "en"
-@export_enum("Satellite", "Street", "Hybrid") var map_style: int = 0
+@export var map_style: MapType = MapType.SATELLITE
 
 
 func _create_tile_parameters(lat: float, lon: float, zoom: int) -> Dictionary:
@@ -46,7 +51,10 @@ func longitude_to_tile(lon: float, zoom: int) -> int:
 
 
 func latitude_to_tile(lat: float, zoom: int) -> int:
-	return floori((1.0 - log(tan(deg_to_rad(lat)) + 1.0 / cos(deg_to_rad(lat))) / PI) / 2.0 * (1 << zoom))
+	return floori(
+			(1.0 - log(tan(deg_to_rad(lat)) + 1.0 / cos(deg_to_rad(lat))) / PI) /
+			2.0 * (1 << zoom)
+	)
 
 
 func tile_to_longitude(x: int, zoom: int) -> float:

@@ -2,7 +2,13 @@
 class_name MapTile
 extends Resource
 
-enum Format { BMP, JPG, PNG, TGA, WEBP }
+enum Format {
+	 BMP,
+	 JPG,
+	 PNG,
+	 TGA,
+	 WEBP,
+ }
 
 @export var bounds: Rect2
 @export var coords: Vector3i
@@ -26,17 +32,29 @@ func pack(file: FileAccess):
 
 
 func unpack(file: FileAccess) -> Error:
-	if file.eof_reached(): return ERR_FILE_EOF
+	if file.eof_reached():
+		return ERR_FILE_EOF
+
 	bounds = file.get_var(true)
-	if file.eof_reached(): return ERR_FILE_EOF
+	if file.eof_reached():
+		return ERR_FILE_EOF
+
 	coords = file.get_var(true)
-	if file.eof_reached(): return ERR_FILE_EOF
+	if file.eof_reached():
+		return ERR_FILE_EOF
+
 	format = file.get_32()
-	if file.eof_reached(): return ERR_FILE_EOF
+	if file.eof_reached():
+		return ERR_FILE_EOF
+
 	var expected = file.get_32()
-	if file.eof_reached(): return ERR_FILE_EOF
+	if file.eof_reached():
+		return ERR_FILE_EOF
+
 	image = file.get_buffer(expected)
-	if len(image) != expected: return ERR_FILE_EOF
+	if len(image) != expected:
+		return ERR_FILE_EOF
+
 	return OK
 
 
