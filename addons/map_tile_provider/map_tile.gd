@@ -72,3 +72,13 @@ func to_image(img: Image) -> Error:
 			return img.load_webp_from_buffer(image)
 		_:
 			return ERR_INVALID_DATA
+
+
+func degrees_per_pixel(size: Vector2i = Vector2i(256, 256)) -> Vector2:
+	var degrees = bounds.size
+	return Vector2(degrees.x / size.x, degrees.y / size.y)
+
+
+func pixels_per_degree(size: Vector2i = Vector2i(256, 256)) -> Vector2:
+	var degrees = bounds.size
+	return Vector2(size.x / degrees.x, size.y / degrees.y)
