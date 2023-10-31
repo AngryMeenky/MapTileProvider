@@ -70,9 +70,12 @@ func tile_to_coordinates(x: int, y: int, zoom: int) -> Vector2:
 
 
 func tile_to_bounds(x: int, y: int, zoom: int) -> Rect2:
+	var lat = tile_to_latitude(y, zoom)
+	var lon = tile_to_longitude(x, zoom)
+
 	return Rect2(
-		tile_to_latitude(y,     zoom), tile_to_longitude(x,     zoom),
-		tile_to_latitude(y + 1, zoom), tile_to_longitude(x + 1, zoom)
+			lon, lat,
+			tile_to_longitude(x + 1, zoom) - lon, tile_to_latitude(y - 1, zoom) - lat
 	)
 
 
