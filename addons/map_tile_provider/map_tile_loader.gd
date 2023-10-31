@@ -80,11 +80,18 @@ func _process(delta):
 			ResourceLoader.THREAD_LOAD_LOADED:
 				tile_loaded.emit(OK, ResourceLoader.load_threaded_get(cache_path))
 				_local.remove_at(idx)
+				_check_queued_loads()
 			_:
 				var result =_load_tile_from_server(_local[idx][0], _local[idx][1], true)
 				if result != OK:
 					tile_loaded.emit(result, null)
 				_local.remove_at(idx)
+
+
+func _check_queued_loads() -> void:
+	var queued = _waiting.pop_front()
+	if queued:
+		_load_tile_from_server(queued[0], queued[1], false)
 
 
 func apply_custom_fields() -> void:
@@ -102,6 +109,18 @@ func available() -> int:
 	if count < 0:
 		count = 0
 	return count
+
+
+func gps_to_tile(lat: float, lon: float, zoom: int) -> Vector3i:
+	return Vector3i(
+			_map_provider.longitude_to_tile(lon, zoom),
+			_map_provider.latitude_to_tile(lat, zoom),
+			zoom
+	)
+
+
+func get_tile_bounds(x: int, y: int, zoom: int) -> Rect2:
+	return _map_provider.tile_to_bounds(x, y, zoom)
 
 
 func _validate_image_format(data: PackedByteArray, expected: MapTile.Format):
@@ -131,18 +150,15 @@ func _handle_http_response(result: int, response_code: int, headers: PackedStrin
 			if cache_tiles:
 				ResourceSaver.save(tile, data[3][1])
 			tile_loaded.emit(OK, tile)
-			if not _waiting.is_empty():
-				var queued = _waiting.pop_front()
-				if queued:
-					_load_tile_from_server(queued[0], queued[1], true)
 		else:
 			tile_loaded.emit(ERR_CANT_ACQUIRE_RESOURCE, null)
 	else:
 		tile_loaded.emit(ERR_CANT_CONNECT, null)
+	_check_queued_loads()
 
 
 func load_tile(lat: float, lon: float, zoom: int, queue: bool = false) -> Error:
-	if available() <= 0:
+	if available() <= 0 and not queue:
 		return ERR_UNAVAILABLE
 
 	# keep the values in the valid domain
@@ -185,8 +201,15 @@ func _load_tile_from_server(locs: Array, args: Dictionary, queue: bool) -> Error
 			_reserve.push_back(req)
 			_outstanding_requests -= 1
 		return err
-	elif queue:
-		_waiting.push_back([ locs, args ])
+	elif queue and _waiting.size() < 32:
+		var found := false
+		for request in _waiting:
+			if request[0][1] == locs[0]:
+				found = true
+				break
+		if not found:
+			_waiting.push_back([ locs, args ])
+			return OK
 
 	# all parallel clients are currently being used
 	return ERR_BUSY
