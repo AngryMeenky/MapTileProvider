@@ -61,6 +61,7 @@ var _active := []
 var _reserve := []
 var _local := []
 var _waiting := []
+var _filter := {}
 
 
 func _ready():
@@ -71,26 +72,40 @@ func _ready():
 
 
 func _process(delta):
-	var idx: int = 0
-	while idx < len(_local):
+	var complete := []
+	for idx in len(_local):
 		var cache_path = _local[idx][0][1]
 		match(ResourceLoader.load_threaded_get_status(cache_path)):
 			ResourceLoader.THREAD_LOAD_IN_PROGRESS:
-				idx += 1 # still loading
+				# still loading
+				pass
 			ResourceLoader.THREAD_LOAD_LOADED:
+				_outstanding_requests -= 1
 				tile_loaded.emit(OK, ResourceLoader.load_threaded_get(cache_path))
-				_local.remove_at(idx)
+				complete.push_front(idx)
 				_check_queued_loads()
 			_:
-				var result =_load_tile_from_server(_local[idx][0], _local[idx][1], true)
+				_outstanding_requests -= 1
+				var result =_load_tile_from_server(_local[idx][0], _local[idx][1], true, false)
 				if result != OK:
 					tile_loaded.emit(result, null)
-				_local.remove_at(idx)
+				complete.push_front(idx)
+
+	for idx in complete:
+		_local.remove_at(idx)
+
+func _enqueue_request(request: Array) -> void:
+	if not request[0][1] in _filter:
+		_waiting.push_back(request)
+		_filter[request[0][1]] = true
+		print("enqueued: ", request[0])
 
 
 func _check_queued_loads() -> void:
 	var queued = _waiting.pop_front()
 	if queued:
+		print("dequeued: ", queued[0])
+		_filter.erase(queued[0][1])
 		_load_tile_from_server(queued[0], queued[1], false)
 
 
@@ -135,6 +150,7 @@ func _validate_image_format(data: PackedByteArray, expected: MapTile.Format):
 
 
 func _handle_http_response(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, data: Array):
+	print("%d, %d, %d" % [ result, response_code, body.size() ])
 	data[0].request_completed.disconnect(data[1])
 	_reserve.push_back(data[0])
 	_outstanding_requests -= 1
@@ -162,25 +178,31 @@ func load_tile(lat: float, lon: float, zoom: int, queue: bool = false) -> Error:
 		return ERR_UNAVAILABLE
 
 	# keep the values in the valid domain
-	lat = clampf(lat, -90.0, 90.0)
-	lon = clampf(lon, -180.0, 180.0)
+	lat = clampf(lat,  -85.0511,  85.0511)
+	lon = clampf(lon, -180.0,    180.0)
 
 	# create the URL and cache path of the desired tile
 	var args = _map_provider._create_tile_parameters(lat, lon, zoom)
 	var locs = [ _map_provider._construct_url(args), null ]
 	locs[1] = _map_provider._url_to_cache(locs[0], args)
-	# check the cache first
-	if cache_tiles and FileAccess.file_exists(locs[1]):
-		if ResourceLoader.load_threaded_request(locs[1], "MapTile") == OK:
-			_local.append([ locs, args ])
-			return OK
+
+	if available() <= 0:
+		_enqueue_request([ locs, args ])
+		return OK
 
 	# fallback to a tile server
 	return _load_tile_from_server(locs, args, queue)
 
 
-func _load_tile_from_server(locs: Array, args: Dictionary, queue: bool) -> Error:
-	if not allow_network:
+func _load_tile_from_server(locs: Array, args: Dictionary, queue: bool, check := true) -> Error:
+	# check the cache first
+	if cache_tiles and check and FileAccess.file_exists(locs[1]):
+		if ResourceLoader.load_threaded_request(locs[1], "MapTile") == OK:
+			_outstanding_requests += 1
+			_local.append([ locs, args ])
+			return OK
+
+	if not allow_network or available() <= 0:
 		return ERR_UNAVAILABLE
 
 	var req: HTTPRequest = _reserve.pop_back()
@@ -201,15 +223,9 @@ func _load_tile_from_server(locs: Array, args: Dictionary, queue: bool) -> Error
 			_reserve.push_back(req)
 			_outstanding_requests -= 1
 		return err
-	elif queue and _waiting.size() < 32:
-		var found := false
-		for request in _waiting:
-			if request[0][1] == locs[0]:
-				found = true
-				break
-		if not found:
-			_waiting.push_back([ locs, args ])
-			return OK
+	elif queue :
+		_enqueue_request([ locs, args ])
+		return OK
 
 	# all parallel clients are currently being used
 	return ERR_BUSY
