@@ -14,9 +14,7 @@ enum MapType {
 @export var map_style := MapType.SATELLITE
 
 
-func _create_tile_parameters(lat: float, lon: float, zoom: int) -> Dictionary:
-	var x = longitude_to_tile(lon, zoom)
-	var y = latitude_to_tile(lat, zoom)
+func _create_tile_parameters_for_indices(x: int, y: int, zoom: int) -> Dictionary:
 	return {
 		"server": _select_server(x, y),
 		"quad": _construct_quad_key(x, y, zoom),
@@ -27,6 +25,12 @@ func _create_tile_parameters(lat: float, lon: float, zoom: int) -> Dictionary:
 		"map_style": map_style,
 		"format": MapTile.Format.BMP
 	}
+
+
+func _create_tile_parameters(lat: float, lon: float, zoom: int) -> Dictionary:
+	return _create_tile_parameters_for_indices(
+			longitude_to_tile(lon, zoom), latitude_to_tile(lat, zoom), zoom
+	)
 
 
 func get_tile_url(lat: float, lon: float, zoom: int) -> String:

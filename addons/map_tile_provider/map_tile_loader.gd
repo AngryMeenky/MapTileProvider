@@ -98,13 +98,13 @@ func _enqueue_request(request: Array) -> void:
 	if not request[0][1] in _filter:
 		_waiting.push_back(request)
 		_filter[request[0][1]] = true
-		print("enqueued: ", request[0])
+#		print("enqueued: ", request[0])
 
 
 func _check_queued_loads() -> void:
 	var queued = _waiting.pop_front()
 	if queued:
-		print("dequeued: ", queued[0])
+#		print("dequeued: ", queued[0])
 		_filter.erase(queued[0][1])
 		_load_tile_from_server(queued[0], queued[1], false)
 
@@ -150,7 +150,7 @@ func _validate_image_format(data: PackedByteArray, expected: MapTile.Format):
 
 
 func _handle_http_response(result: int, response_code: int, headers: PackedStringArray, body: PackedByteArray, data: Array):
-	print("%d, %d, %d" % [ result, response_code, body.size() ])
+#	print("%d, %d, %d" % [ result, response_code, body.size() ])
 	data[0].request_completed.disconnect(data[1])
 	_reserve.push_back(data[0])
 	_outstanding_requests -= 1
@@ -171,6 +171,27 @@ func _handle_http_response(result: int, response_code: int, headers: PackedStrin
 	else:
 		tile_loaded.emit(ERR_CANT_CONNECT, null)
 	_check_queued_loads()
+
+
+func load_tile_by_indices(x: int, y: int, z: int, queue: bool = false) -> Error:
+	if available() <= 0 and not queue:
+		return ERR_UNAVAILABLE
+
+	# keep the values in the valid domain
+	x = clampi(x, 0, (1 << z) - 1)
+	y = clampi(y, 0, (1 << z) - 1)
+
+	# create the URL and cache path of the desired tile
+	var args = _map_provider._create_tile_parameters_for_indices(x, y, z)
+	var locs = [ _map_provider._construct_url(args), null ]
+	locs[1] = _map_provider._url_to_cache(locs[0], args)
+
+	if available() <= 0:
+		_enqueue_request([ locs, args ])
+		return OK
+
+	# fallback to a tile server
+	return _load_tile_from_server(locs, args, queue)
 
 
 func load_tile(lat: float, lon: float, zoom: int, queue: bool = false) -> Error:
