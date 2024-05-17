@@ -148,7 +148,7 @@ func generate_tile_set(north: float, west: float, south: float, east: float, zoo
 	var nw := gps_to_tile(north, west, zoom)
 	var se := gps_to_tile(south, east, zoom)
 
-	return Rect2i(nw.x, nw.y, nw.x - se.x + 1, nw.y - se.y + 1)
+	return Rect2i(nw.x, nw.y, se.x - nw.x + 1, se.y - nw.y + 1)
 
 
 func get_tile_bounds(x: int, y: int, zoom: int) -> Rect2:
