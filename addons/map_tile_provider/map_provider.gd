@@ -50,30 +50,30 @@ func get_tile_locations(lat: float, lon: float, zoom: int) -> Array:
 	return [ url, _url_to_cache(url, args) ]
 
 
-func longitude_to_tile(lon: float, zoom: int) -> int:
+static func longitude_to_tile(lon: float, zoom: int) -> int:
 	return floori((lon + 180.0) / 360.0 * (1 << zoom))
 
 
-func latitude_to_tile(lat: float, zoom: int) -> int:
+static func latitude_to_tile(lat: float, zoom: int) -> int:
 	return floori(
 			(1.0 - log(tan(deg_to_rad(lat)) + 1.0 / cos(deg_to_rad(lat))) / PI) /
 			2.0 * (1 << zoom)
 	)
 
 
-func tile_to_longitude(x: int, zoom: int) -> float:
+static func tile_to_longitude(x: int, zoom: int) -> float:
 	return x * 360.0 / (1 << zoom) - 180.0
 
 
-func tile_to_latitude(y: int, zoom: int) -> float:
+static func tile_to_latitude(y: int, zoom: int) -> float:
 	return rad_to_deg(atan(sinh(PI * (1 - 2.0 * y / (1 << zoom)))))
 
 
-func tile_to_coordinates(x: int, y: int, zoom: int) -> Vector2:
+static func tile_to_coordinates(x: int, y: int, zoom: int) -> Vector2:
 	return Vector2(tile_to_latitude(y, zoom), tile_to_longitude(x, zoom))
 
 
-func tile_to_bounds(x: int, y: int, zoom: int) -> Rect2:
+static func tile_to_bounds(x: int, y: int, zoom: int) -> Rect2:
 	var lat = tile_to_latitude(y, zoom)
 	var lon = tile_to_longitude(x, zoom)
 
