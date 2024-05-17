@@ -12,7 +12,8 @@ config_version=5
 
 config/name="MapTileProvider"
 run/main_scene="res://addons/map_tile_provider/examples/single.tscn"
-config/features=PackedStringArray("4.1", "Forward Plus")
+config/features=PackedStringArray("4.2", "Forward Plus")
+boot_splash/image="res://icon.png"
 config/icon="res://icon.svg"
 
 [editor_plugins]
