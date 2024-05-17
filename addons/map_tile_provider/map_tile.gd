@@ -14,6 +14,7 @@ enum Format {
 @export var coords: Vector3i
 @export var image: PackedByteArray
 @export var format: Format
+@export var path: String
 
 
 func _init(b: Rect2 = Rect2(), c: Vector3i = Vector3i.ZERO, i: PackedByteArray = [], f: Format = Format.JPG):
@@ -21,6 +22,7 @@ func _init(b: Rect2 = Rect2(), c: Vector3i = Vector3i.ZERO, i: PackedByteArray =
 	coords = c
 	image = i
 	format = f
+	path = ""
 
 
 func pack(file: FileAccess):
@@ -32,6 +34,9 @@ func pack(file: FileAccess):
 
 
 func unpack(file: FileAccess) -> Error:
+	# record the path it was loaded from
+	path = file.get_path()
+
 	if file.eof_reached():
 		return ERR_FILE_EOF
 
